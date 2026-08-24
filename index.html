@@ -575,7 +575,8 @@
 
   <script>
 /* ---------- dil sistemi ---------- */
-    var lang = "tr";
+var tarayiciDili = navigator.language || navigator.userLanguage || "en";
+var lang = tarayiciDili.toLowerCase().indexOf("tr") === 0 ? "tr" : "en";    
 
     var sozluk = {
       tr: {
