@@ -1,0 +1,912 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="sekmeBaslik">Göz Kararı Astronomi</title>
+  <style>
+    html {
+      scroll-behavior: smooth;
+      transition: filter 0.4s ease;
+    }
+
+    html.gece-modu {
+      filter: grayscale(1) sepia(1) saturate(6) hue-rotate(-20deg) brightness(0.75) contrast(1.15);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      margin: -30px -30px 0 -30px;
+      background-color: rgba(11,16,38,0.85);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .topbar-baslik {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #F2C14E;
+    }
+
+    .topbar-slogan {
+      font-size: 0.72rem;
+      color: #A9AFC9;
+    }
+
+    .topbar-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .topbar-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .topbar-btn:hover {
+      border-color: #F2C14E;
+      color: #F2C14E;
+    }
+
+    .topbar-btn-gece {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 10px;
+     }
+
+     .topbar-btn-icon {
+       font-size: 0.95rem;
+
+     }
+    
+     .topbar-btn-label {
+       font-size: 0.55rem;
+     }      
+
+    body {
+      background-color: #0B1026;
+      background-image:
+        radial-gradient(1.5px 1.5px at 20px 30px, white, transparent),
+        radial-gradient(1.5px 1.5px at 90px 70px, white, transparent),
+        radial-gradient(1px 1px at 130px 20px, white, transparent),
+        radial-gradient(1.5px 1.5px at 170px 100px, white, transparent),
+        radial-gradient(1px 1px at 50px 120px, white, transparent),
+        radial-gradient(1px 1px at 190px 50px, white, transparent),
+        radial-gradient(circle at 10% 15%, rgba(127,88,255,0.3), transparent 35%),
+        radial-gradient(circle at 90% 85%, rgba(232,115,90,0.22), transparent 35%),
+        radial-gradient(circle at 50% 100%, rgba(127,216,255,0.15), transparent 30%);
+      background-size:
+        220px 220px, 220px 220px, 220px 220px,
+        220px 220px, 220px 220px, 220px 220px,
+        100% 100%, 100% 100%, 100% 100%;
+      background-repeat:
+        repeat, repeat, repeat,
+        repeat, repeat, repeat,
+        no-repeat, no-repeat, no-repeat;
+      background-attachment: fixed;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px;
+    }
+
+    .header {
+      text-align: left;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .slogan {
+      color: #A9AFC9;
+      font-size: 0.95rem;
+      margin-top: 8px;
+      margin-left: 2px;
+      max-width: 420px;
+    }
+
+    .hero {
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .buttons {
+      text-align: center;
+    }
+
+    a {
+      display: inline-block;
+      background-color: #F2C14E;
+      color: black;
+      padding: 12px 24px;
+      margin: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .section {
+      min-height: 75vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .section p {
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+
+    .kadir-skala {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 26px;
+      margin: 18px 0;
+    }
+
+    .skala-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .skala-daire {
+      background-color: #F2C14E;
+      border-radius: 50%;
+      box-shadow: 0 0 16px rgba(242,193,78,0.6);
+      margin-bottom: 8px;
+    }
+
+    .skala-etiket {
+      font-size: 0.75rem;
+      color: #A9AFC9;
+    }
+
+    .ucgen-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .rehber {
+      margin-top: 20px;
+      text-align: left;
+      background-color: rgba(255,255,255,0.05);
+      padding: 16px;
+      border-radius: 10px;
+    }
+
+    .rehber label {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #A9AFC9;
+    }
+
+    .rehber select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    #rehberMetni {
+      margin-top: 14px;
+      font-size: 0.95rem;
+    }
+
+    .yildiz-listesi {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+      max-width: 320px;
+      margin-top: 16px;
+    }
+
+    .yildiz-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .yildiz-btn {
+      background-color: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .yildiz-btn:hover {
+      border-color: #F2C14E;
+      color: #F2C14E;
+    }
+
+    .yildiz-not {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 0.85rem;
+      color: #A9AFC9;
+      text-align: left;
+      padding: 0 10px;
+    }
+
+    .yildiz-not.acik {
+      max-height: 150px;
+      padding: 10px;
+    }
+
+    .hesap-kutu {
+      width: 100%;
+      max-width: 340px;
+      text-align: left;
+      margin-top: 10px;
+    }
+
+    .hesap-kutu label {
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      color: #A9AFC9;
+    }
+
+    .hesap-kutu select,
+    .hesap-kutu input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .hesapla-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #F2C14E, #E8735A);
+      color: #14100a;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .hesapla-btn:active {
+      transform: scale(0.98);
+    }
+
+    .sonuc {
+      display: none;
+      margin-top: 20px;
+      background-color: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .sonuc.goster {
+      display: block;
+    }
+
+    .sonuc-satir {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.88rem;
+    }
+
+    .sonuc-satir:last-of-type {
+      border-bottom: none;
+    }
+
+    .sonuc-satir span:first-child {
+      color: #A9AFC9;
+    }
+
+    .degerlendirme-satir {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .degerlendirme-satir .geri-bildirim {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    .geri-bildirim {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: rgba(242,193,78,0.1);
+      border-left: 3px solid #F2C14E;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .nasil-btn {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: transparent;
+      color: #A9AFC9;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .nasil-btn:hover {
+      border-color: #F2C14E;
+      color: #F2C14E;
+    }
+
+    .nasil-metni {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 0.8rem;
+      color: #A9AFC9;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .nasil-metni.acik {
+      max-height: 300px;
+      padding-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-brand">
+      <svg width="38" height="38" viewBox="0 0 100 100">
+        <defs>
+          <radialGradient id="irisGrad2" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stop-color="#241a5c"/>
+            <stop offset="100%" stop-color="#0b0a24"/>
+          </radialGradient>
+          <filter id="starGlow2" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.4" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <path d="M6,50 C22,18 78,18 94,50 C78,72 22,72 6,50 Z" fill="none" stroke="#F2C14E" stroke-width="2.5"/>
+        <circle cx="50" cy="50" r="27" fill="url(#irisGrad2)"/>
+        <circle cx="34" cy="38" r="0.8" fill="#ffffff" opacity="0.35"/>
+        <circle cx="40" cy="30" r="0.6" fill="#ffffff" opacity="0.3"/>
+        <circle cx="60" cy="32" r="0.7" fill="#ffffff" opacity="0.3"/>
+        <circle cx="68" cy="42" r="0.6" fill="#ffffff" opacity="0.25"/>
+        <circle cx="70" cy="55" r="0.7" fill="#ffffff" opacity="0.3"/>
+        <circle cx="58" cy="66" r="0.6" fill="#ffffff" opacity="0.3"/>
+        <circle cx="44" cy="68" r="0.7" fill="#ffffff" opacity="0.3"/>
+        <circle cx="32" cy="60" r="0.6" fill="#ffffff" opacity="0.25"/>
+        <line x1="50" y1="40" x2="40" y2="58" stroke="#F2C14E" stroke-width="0.6" opacity="0.6"/>
+        <line x1="50" y1="40" x2="62" y2="56" stroke="#F2C14E" stroke-width="0.6" opacity="0.6"/>
+        <line x1="40" y1="58" x2="62" y2="56" stroke="#F2C14E" stroke-width="0.6" opacity="0.6"/>
+        <circle cx="50" cy="40" r="2.2" fill="#F2C14E" filter="url(#starGlow2)"/>
+        <circle cx="40" cy="58" r="1.6" fill="#F2C14E" filter="url(#starGlow2)"/>
+        <circle cx="62" cy="56" r="1.7" fill="#F2C14E" filter="url(#starGlow2)"/>
+      </svg>
+      <div class="topbar-text">
+        <span class="topbar-baslik" data-i18n="topbarBaslik">Göz Kararı Astronomi</span>
+        <span class="topbar-slogan" data-i18n="topbarSlogan">Gökyüzüne bakarak evreni ölçün</span>
+      </div>
+    </div>
+
+    <div class="topbar-controls">
+      <button class="topbar-btn topbar-btn-gece" id="geceBtn">
+        <span class="topbar-btn-icon">🔴</span>
+        <span class="topbar-btn-label" data-i18n="geceLabel">Gece Görüşü</span>
+      </button>
+      <button class="topbar-btn" id="dilBtn">EN</button>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="logo-row">
+      <h1 data-i18n="headerBaslik">Göz Kararı Astronomi</h1>
+    </div>
+    <p class="slogan" data-i18n="headerSlogan">Gökyüzüne bakarak yıldızların hem parlaklıkları hem de uzaklıklarını kendi gözlerinizle hesaplayın!</p>
+  </div>
+
+  <div class="hero">
+    <div class="buttons">
+      <a href="#bilgi" data-i18n="btnNasil">Nasıl Yapacağım?</a>
+      <a href="#yildizsec" data-i18n="btnHesapla">Hesaplamaya Geç!</a>
+    </div>
+  </div>
+
+  <div class="section" id="bilgi">
+    <h2 data-i18n="bilgiBaslik">Bilgilendirme</h2>
+
+    <p data-i18n="bilgiP1">Kadir nedir? = bir yıldızın gökyüzünde bize ne kadar parlak göründüğünü anlatan ölçek. Ama önemli bir kural var: sayı küçüldükçe, hatta eksiye indikçe, yıldız daha da parlaklaşır.</p>
+
+    <div class="kadir-skala">
+      <div class="skala-item">
+        <div class="skala-daire" style="width:70px;height:70px;"></div>
+        <div class="skala-etiket" data-i18n="skala0">Kadir = 0.0</div>
+      </div>
+      <div class="skala-item">
+        <div class="skala-daire" style="width:44px;height:44px;"></div>
+        <div class="skala-etiket" data-i18n="skala1">Kadir = 1.0</div>
+      </div>
+      <div class="skala-item">
+        <div class="skala-daire" style="width:28px;height:28px;"></div>
+        <div class="skala-etiket" data-i18n="skala2">Kadir = 2.0</div>
+      </div>
+    </div>
+
+    <p data-i18n="bilgiP2">Yaz Üçgeni'ni tanıyın: Vega, Deneb ve Altair. Bu üç parlak yıldız, gökyüzünde dev bir hayali üçgen oluşturur. En parlağı, üçgenin tepesindeki Vega'dır. Bu üçünün kadir değerlerini karşılaştırarak sayı değerleri arasındaki farkın parlaklık farkını ne denli etkilediğini görün...</p>
+
+    <div class="ucgen-wrap">
+      <svg width="100%" viewBox="0 0 320 220" style="max-width:320px;">
+        <defs>
+          <filter id="starGlow3" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="1.6" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <line x1="140" y1="40" x2="70" y2="150" stroke="#F2C14E" stroke-width="1" opacity="0.5"/>
+        <line x1="140" y1="40" x2="250" y2="170" stroke="#F2C14E" stroke-width="1" opacity="0.5"/>
+        <line x1="70" y1="150" x2="250" y2="170" stroke="#F2C14E" stroke-width="1" opacity="0.5"/>
+        <circle cx="140" cy="40" r="8" fill="#F2C14E" filter="url(#starGlow3)"/>
+        <circle cx="70" cy="150" r="4.6" fill="#F2C14E" filter="url(#starGlow3)"/>
+        <circle cx="250" cy="170" r="5.7" fill="#F2C14E" filter="url(#starGlow3)"/>
+        <text x="150" y="35" fill="#F4F1E8" font-size="12">Vega · 0.03</text>
+        <text x="15" y="145" fill="#A9AFC9" font-size="11">Deneb · 1.25</text>
+        <text x="225" y="190" fill="#A9AFC9" font-size="11">Altair · 0.76</text>
+      </svg>
+    </div>
+
+    <p data-i18n="bilgiP3">Yarımkürenizi ve güncel mevsimi girerek Vega'nın nerede olduğunu öğrenebilirsiniz! Neden Vega? Çünkü o, kadir ölçeğinde kabaca 0 noktasıdır!</p>
+
+    <div class="rehber">
+      <label data-i18n="yarimkureLabel">Yarımküre:</label>
+      <select id="yarimkure" onchange="rehberGoster()">
+        <option value="kuzey" data-i18n="kuzeyOpt">Kuzey Yarımküre</option>
+        <option value="guney" data-i18n="guneyOpt">Güney Yarımküre</option>
+      </select>
+
+      <label data-i18n="mevsimLabel">Mevsim:</label>
+      <select id="mevsim" onchange="rehberGoster()">
+        <option value="yaz" data-i18n="yazOpt">Yaz</option>
+        <option value="sonbahar" data-i18n="sonbaharOpt">Sonbahar</option>
+        <option value="kis" data-i18n="kisOpt">Kış</option>
+        <option value="ilkbahar" data-i18n="ilkbaharOpt">İlkbahar</option>
+      </select>
+
+      <p id="rehberMetni"></p>
+    </div>
+  </div>
+
+  <div class="section" id="yildizsec">
+    <h2 data-i18n="yildizsecBaslik">Bir Yıldız Seçin</h2>
+    <p data-i18n="yildizsecP">Aşağıdaki parlak yıldızlardan birine tıklayın, yarımkürenize göre nerede arayacağınızı bulun! Tercihen, güncel mevsiminize uygun birini seçin.</p>
+
+    <div class="yildiz-listesi" id="yildizListesi"></div>
+  </div>
+
+  <div class="section" id="hesapla">
+    <h2 data-i18n="hesaplaBaslik">Hesaplama</h2>
+
+    <div class="hesap-kutu">
+      <label data-i18n="secimLabel">Yukarıda seçip gökte bulduğunuz yıldız neydi?</label>
+      <select id="secilenYildiz"></select>
+
+      <label data-i18n="kadirLabel">Tahmini kadir değeriniz</label>
+      <input type="number" id="tahminKadir" step="0.01" data-i18n-placeholder="kadirPlaceholder" placeholder="ör. 0.9">
+
+      <button class="hesapla-btn" onclick="hesaplaSonuc()" data-i18n="hesaplaBtn">Hesapla!</button>
+
+      <div class="sonuc" id="sonucKutu">
+        <div class="sonuc-satir"><span data-i18n="rTahmin">Tahmininiz</span><span id="sTahmin">—</span></div>
+        <div class="sonuc-satir"><span data-i18n="rUzaklikHesap">Hesapladığınız uzaklık</span><span id="sUzaklikHesap">—</span></div>
+        <div class="sonuc-satir"><span data-i18n="rGercekKadir">Gerçek görünür kadir</span><span id="sGercekKadir">—</span></div>
+        <div class="sonuc-satir"><span data-i18n="rUzaklikGercek">Gerçek uzaklık</span><span id="sUzaklikGercek">—</span></div>
+        <div class="sonuc-satir"><span data-i18n="rHata">Hata payınız</span><span id="sHata">—</span></div>
+
+        <div class="degerlendirme-satir">
+          <div class="geri-bildirim" id="sGeriBildirim"></div>
+          <button class="nasil-btn" onclick="nasilToggle()">?</button>
+        </div>
+        <div class="nasil-metni" id="nasilMetni" data-i18n="nasilMetniTxt">
+          Kullandığımız formül "uzaklık modülü" olarak bilinir. Görünür kadir (m) ile mutlak kadir (M) — yıldızın 32,6 ışık yılı uzakta olsaydı sahip olacağı parlaklık — arasındaki farktan uzaklığı hesaplıyoruz: d (pc) = 10^((m−M+5)/5). Mutlak kadir zaten veritabanında mevcut, size sadece görünür kadiri tahmin etmek kalıyor!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+/* ---------- dil sistemi ---------- */
+    var lang = "tr";
+
+    var sozluk = {
+      tr: {
+        sekmeBaslik: "Göz Kararı Astronomi",
+        topbarBaslik: "Göz Kararı Astronomi",
+        topbarSlogan: "Gökyüzüne bakarak evreni ölçün",
+        headerBaslik: "Göz Kararı Astronomi",
+        headerSlogan: "Gökyüzüne bakarak yıldızların hem parlaklıkları hem de uzaklıklarını kendi gözlerinizle hesaplayın!",
+        btnNasil: "Nasıl Yapacağım?",
+        btnHesapla: "Hesaplamaya Geç!",
+        bilgiBaslik: "Bilgilendirme",
+        bilgiP1: "Kadir nedir? = bir yıldızın gökyüzünde bize ne kadar parlak göründüğünü anlatan ölçek. Ama önemli bir kural var: sayı küçüldükçe, hatta eksiye indikçe, yıldız daha da parlaklaşır.",
+        bilgiP2: "Yaz Üçgeni'ni tanıyın: Vega, Deneb ve Altair. Bu üç parlak yıldız, gökyüzünde dev bir hayali üçgen oluşturur. En parlağı, üçgenin tepesindeki Vega'dır. Bu üçünün kadir değerlerini karşılaştırarak sayı değerleri arasındaki farkın parlaklık farkını ne denli etkilediğini görün...",
+        bilgiP3: "Yarımkürenizi ve güncel mevsimi girerek Vega'nın nerede olduğunu öğrenebilirsiniz! Neden Vega? Çünkü o, kadir ölçeğinde kabaca 0 noktasıdır!",
+        yarimkureLabel: "Yarımküre:",
+        kuzeyOpt: "Kuzey Yarımküre",
+        guneyOpt: "Güney Yarımküre",
+        mevsimLabel: "Mevsim:",
+        yazOpt: "Yaz", sonbaharOpt: "Sonbahar", kisOpt: "Kış", ilkbaharOpt: "İlkbahar",
+        yildizsecBaslik: "Bir Yıldız Seçin",
+        yildizsecP: "Aşağıdaki parlak yıldızlardan birine tıklayın, yarımkürenize göre nerede arayacağınızı bulun! Tercihen, güncel mevsiminize uygun birini seçin.",
+        hesaplaBaslik: "Hesaplama",
+        secimLabel: "Yukarıda seçip gökte bulduğunuz yıldız neydi?",
+        kadirLabel: "Tahmini kadir değeriniz",
+        kadirPlaceholder: "ör. 0.9",
+        hesaplaBtn: "Hesapla!",
+        rTahmin: "Tahmininiz", rUzaklikHesap: "Hesapladığınız uzaklık",
+        rGercekKadir: "Gerçek görünür kadir", rUzaklikGercek: "Gerçek uzaklık", rHata: "Hata payınız",
+        nasilMetniTxt: "Kullandığımız formül \"uzaklık modülü\" olarak bilinir. Görünür kadir (m) ile mutlak kadir (M) — yıldızın 32,6 ışık yılı uzakta olsaydı sahip olacağı parlaklık — arasındaki farktan uzaklığı hesaplıyoruz: d (pc) = 10^((m−M+5)/5). Mutlak kadir zaten veritabanında mevcut, size sadece görünür kadiri tahmin etmek kalıyor!",
+        lyBirim: "ışık yılı",
+        magBirim: "kadir",
+        skala0: "Kadir = 0.0",
+        skala1: "Kadir = 1.0",
+        skala2: "Kadir = 2.0",
+                geceLabel: "Gece Görüşü (önerilir)"
+      },
+      en: {
+        sekmeBaslik: "Eyeballing the Stars",
+        topbarBaslik: "Eyeballing the Stars",
+        topbarSlogan: "Measure the universe by looking at the sky",
+        headerBaslik: "Eyeballing the Stars",
+        headerSlogan: "Look at the sky and calculate a star's brightness and distance with your own eyes!",
+        btnNasil: "How Do I Do It?",
+        btnHesapla: "Go to Calculation!",
+        bilgiBaslik: "Information",
+        bilgiP1: "Magnitude is a scale describing how bright a star appears to us in the sky. An unusual but essential rule: the smaller the number — even into negative territory — the brighter the star.",
+        bilgiP2: "Meet the Summer Triangle: Vega, Deneb, and Altair. These three bright stars form an imaginary triangle in the sky. The brightest, at the top of the triangle, is Vega. Compare these three in the sky and feel the brightness difference between them.",
+        bilgiP3: "Enter your hemisphere and the current season to learn where Vega is right now! Why Vega? Because it's roughly the 0 point in apparent magnitude scale!",
+        yarimkureLabel: "Hemisphere:",
+        kuzeyOpt: "Northern Hemisphere",
+        guneyOpt: "Southern Hemisphere",
+        mevsimLabel: "Season:",
+        yazOpt: "Summer", sonbaharOpt: "Autumn", kisOpt: "Winter", ilkbaharOpt: "Spring",
+        yildizsecBaslik: "Choose a Star",
+        yildizsecP: "Click one of the bright stars below, and we'll tell you where to look for it based on your hemisphere! Ideally, choose one that suits your current season.",
+        hesaplaBaslik: "Calculation",
+        secimLabel: "Which star did you pick and find in the sky above?",
+        kadirLabel: "Your estimated magnitude",
+        kadirPlaceholder: "e.g. 0.9",
+        hesaplaBtn: "Calculate!",
+        rTahmin: "Your estimate", rUzaklikHesap: "Your calculated distance",
+        rGercekKadir: "Real apparent magnitude", rUzaklikGercek: "Real distance", rHata: "Your error margin",
+        nasilMetniTxt: "The formula we use is known as the \"distance modulus.\" From the difference between apparent magnitude (m) and absolute magnitude (M) — the brightness a star would have at 32.6 light-years — we calculate the distance: d (pc) = 10^((m−M+5)/5). We fetch the absolute magnitude for you from our catalog; you only estimate the brightness you see with your own eyes.",
+        lyBirim: "light-years",
+        magBirim: "mag",
+        skala0: "Magnitude = 0.0",
+        skala1: "Magnitude = 1.0",
+        skala2: "Magnitude = 2.0",
+                geceLabel: "Night Vision (recommend)"
+      }
+    };
+
+    function metinleriUygula() {
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        var anahtar = el.getAttribute("data-i18n");
+        if (sozluk[lang][anahtar] !== undefined) {
+          el.textContent = sozluk[lang][anahtar];
+        }
+      });
+      document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) {
+        var anahtar = el.getAttribute("data-i18n-placeholder");
+        if (sozluk[lang][anahtar] !== undefined) {
+          el.setAttribute("placeholder", sozluk[lang][anahtar]);
+        }
+      });
+      document.getElementById("dilBtn").textContent = lang === "tr" ? "EN" : "TR";
+      document.title = sozluk[lang].sekmeBaslik;
+    }
+
+    /* ---------- yıldız kataloğu ---------- */
+    /* langs: hangi dil arayüzünde bu yıldız listelensin */
+    var yildizKatalog = {
+      sirius:       { tr: "Sirius", en: "Sirius", V: -1.46, M: 1.42, d: 8.6, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında güney gökyüzünde, çok parlak ve alçakta bulunur.", guney: "Yaz aylarında tepenize yakın, göz alıcı şekilde parlar." },
+          en: { kuzey: "On winter evenings, it sits low in the southern sky, very bright.", guney: "In summer, it shines near your zenith, hard to miss." }
+        }
+      },
+      canopus: { tr: "Canopus", en: "Canopus", V: -0.74, M: -5.71, d: 310, langs: ["en"],
+        notlar: {
+          en: { kuzey: "Mostly invisible from the northern hemisphere.", guney: "Visible high in the southern sky year-round." }
+        }
+      },
+      alfacentauri: { tr: "Alfa Centauri", en: "Alpha Centauri", V: -0.27, M: 4.38, d: 4.37, langs: ["en"],
+        notlar: {
+          en: { kuzey: "Not visible from most of the northern hemisphere.", guney: "Found in the southern sky, near the Southern Cross." }
+        }
+      },
+      arcturus: { tr: "Arcturus", en: "Arcturus", V: -0.05, M: -0.30, d: 36.7, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "İlkbahar ve yaz akşamları, tepenize yakın turuncumsu parlar.", guney: "Ufka yakın, bulması nispeten zor olabilir." },
+          en: { kuzey: "On spring and summer evenings, glows orange near your zenith.", guney: "Sits close to the horizon, somewhat harder to spot." }
+        }
+      },
+      vega: { tr: "Vega", en: "Vega", V: 0.03, M: 0.58, d: 25.0, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Yukarıdaki üçgen rehberinde anlattığımız gibi bulabilirsiniz.", guney: "Ufka yakın, kısa süreliğine görünebilir." },
+          en: { kuzey: "Find it using the triangle guide above.", guney: "Appears close to the horizon, only briefly." }
+        }
+      },
+      capella: { tr: "Capella", en: "Capella", V: 0.08, M: -0.48, d: 42.9, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında tepenize yakın, sarımsı parlar.", guney: "Ufka çok yakın, bulması zor olabilir." },
+          en: { kuzey: "On winter evenings, glows yellowish near your zenith.", guney: "Very close to the horizon, hard to find." }
+        }
+      },
+      rigel: { tr: "Rigel", en: "Rigel", V: 0.13, M: -6.69, d: 860, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında Orion takımyıldızının ayağında parlar.", guney: "Yaz akşamlarında tepenize yakın, çok parlaktır." },
+          en: { kuzey: "On winter evenings, shines at the foot of Orion.", guney: "On summer evenings, very bright near your zenith." }
+        }
+      },
+      procyon: { tr: "Procyon", en: "Procyon", V: 0.34, M: 2.66, d: 11.5, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında, Sirius'a yakın bir konumda bulunur.", guney: "Yaz aylarında görülebilir, orta yükseklikte." },
+          en: { kuzey: "On winter evenings, found close to Sirius.", guney: "Visible in summer, at moderate height." }
+        }
+      },
+      achernar: { tr: "Achernar", en: "Achernar", V: 0.46, M: -2.77, d: 139, langs: ["en"],
+        notlar: {
+          en: { kuzey: "Not visible from most of the northern hemisphere.", guney: "Shines in the southern sky on autumn evenings." }
+        }
+      },
+      betelgeuse: { tr: "Betelgeuse", en: "Betelgeuse", V: 0.50, M: -5.85, d: 548, langs: ["tr","en"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında Orion'un omzunda, kırmızımsı parlar.", guney: "Yaz akşamlarında görülebilir, orta yükseklikte." },
+          en: { kuzey: "On winter evenings, glows reddish on Orion's shoulder.", guney: "Visible in summer, at moderate height." }
+        }
+      },
+      aldebaran: { tr: "Aldebaran", en: "Aldebaran", V: 0.85, M: -0.63, d: 65.3, langs: ["tr"],
+        notlar: {
+          tr: { kuzey: "Kış akşamlarında, Pleiades Kümesinin yakınında, Boğa takımyıldızında, kırmızımsı parlar.", guney: "Ufka yakın, kısa süreliğine görünebilir." }
+        }
+      },
+      antares: { tr: "Antares", en: "Antares", V: 0.96, M: -5.28, d: 550, langs: ["tr"],
+        notlar: {
+          tr: { kuzey: "Yaz akşamlarında güney ufkuna yakın, kırmızımsı parlar.", guney: "Tepenize yakın, çok parlak görünür." }
+        }
+      },
+      spica: { tr: "Spica", en: "Spica", V: 0.97, M: -3.55, d: 250, langs: ["tr"],
+        notlar: {
+          tr: { kuzey: "İlkbahar akşamlarında, ufka yakın orta yükseklikte bulunur.", guney: "Tepenize yakın, göz alıcı şekilde parlar." }
+        }
+      }
+    };
+
+    var rehberMetinleri = {
+      tr: {
+        "kuzey-yaz": "Gün batımından sonra doğuya bakın: Vega tepenize yakın, çok parlak duracak.",
+        "kuzey-sonbahar": "Akşamüstü gökyüzünün tepesinde, biraz batıya kaymış halde bulabilirsiniz.",
+        "kuzey-kis": "Sabaha karşı doğu ufkundan yeni doğar, alçakta arayın.",
+        "kuzey-ilkbahar": "Gece yarısına doğru doğu ufkunda yükselmeye başlar.",
+        "guney-yaz": "Kuzey ufkuna yakın, alçakta arayın; bulması biraz zor olabilir.",
+        "guney-sonbahar": "Akşam erken saatlerde kuzeybatı ufkuna yakın, kısa süreliğine görünür.",
+        "guney-kis": "Bu mevsimde ufkun altında kalır, görmeniz zor olur.",
+        "guney-ilkbahar": "Sabaha karşı kuzeydoğu ufkundan belli belirsiz yükselir."
+      },
+      en: {
+        "kuzey-yaz": "Look east after sunset: Vega will be high and very bright.",
+        "kuzey-sonbahar": "In the early evening, look near the top of the sky, slightly toward the west.",
+        "kuzey-kis": "It rises fresh from the eastern horizon before dawn; look low.",
+        "kuzey-ilkbahar": "It starts rising from the eastern horizon around midnight.",
+        "guney-yaz": "Look low, near the northern horizon; it may be a bit hard to find.",
+        "guney-sonbahar": "In the early evening, appears briefly near the northwest horizon.",
+        "guney-kis": "It stays below the horizon this season, hard to see.",
+        "guney-ilkbahar": "Rises faintly from the northeast horizon before dawn."
+      }
+    };
+
+    function rehberGoster() {
+      var yarimkure = document.getElementById("yarimkure").value;
+      var mevsim = document.getElementById("mevsim").value;
+      var anahtar = yarimkure + "-" + mevsim;
+      document.getElementById("rehberMetni").textContent = rehberMetinleri[lang][anahtar];
+      yildizNotlariGuncelle();
+    }
+
+    /* ---------- yıldız listesi ve seçim kutusu, dile göre oluşturulur ---------- */
+    function yildizListesiOlustur() {
+      var kapsayici = document.getElementById("yildizListesi");
+      var secim = document.getElementById("secilenYildiz");
+      kapsayici.innerHTML = "";
+      secim.innerHTML = "";
+
+      for (var id in yildizKatalog) {
+        var yildiz = yildizKatalog[id];
+        if (yildiz.langs.indexOf(lang) === -1) continue;
+
+        var item = document.createElement("div");
+        item.className = "yildiz-item";
+
+        var btn = document.createElement("button");
+        btn.className = "yildiz-btn";
+        btn.textContent = yildiz[lang];
+        btn.onclick = (function (starId) {
+          return function () { yildizToggle(starId); };
+        })(id);
+
+        var not = document.createElement("div");
+        not.className = "yildiz-not";
+        not.id = "not-" + id;
+
+        item.appendChild(btn);
+        item.appendChild(not);
+        kapsayici.appendChild(item);
+
+        var opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = yildiz[lang];
+        secim.appendChild(opt);
+      }
+
+      yildizNotlariGuncelle();
+    }
+
+    function yildizNotlariGuncelle() {
+      var yarimkure = document.getElementById("yarimkure").value;
+      for (var id in yildizKatalog) {
+        var yildiz = yildizKatalog[id];
+        if (yildiz.langs.indexOf(lang) === -1) continue;
+        var notlarDili = yildiz.notlar[lang] || yildiz.notlar["en"];
+        var not = notlarDili[yarimkure];
+        var kutu = document.getElementById("not-" + id);
+        if (kutu) kutu.textContent = yildiz[lang] + ": " + not;
+      }
+    }
+
+    function yildizToggle(id) {
+      var tikanan = document.getElementById("not-" + id);
+      document.querySelectorAll(".yildiz-not").forEach(function (el) {
+        if (el.id !== "not-" + id) el.classList.remove("acik");
+      });
+      tikanan.classList.toggle("acik");
+    }
+
+    /* ---------- hesaplama ---------- */
+    var geriBildirimler = {
+      tr: [
+        [0.05, "İnanılır gibi değil! Şaşırmak serbest... Şahin misiniz acaba 😄? Veya rüya? Bu işin ustasısınız üstadım! 🥳"],
+        [0.25, "Muhteşem! Gözlerinizin hassasiyeti takdire şayan! Sakın kaybetmeyin bunu! ⚡🌝"],
+        [0.50, "Çok güzel! Resmen gizli bir hazinesiniz! Çok az ek hassasiyetle (ki o sizde var, besbelli!) önünüzde kimsecikler duramayacak 🌜"],
+        [0.75, "Bir deneme için kesinlikle harika bir başarı! Sorunsuz düşünüyorsunuz! Sadece azıcık pratikle tamamen hallolacak! Muhteşemsiniz 😎🌞"],
+        [1.00, "Kesinlikle kötü bir sonuç değil! Logaritmik artış çok keskin, onun azizliği! Çok iyi iş çıkardınız, tebrikler! 😼✨"],
+        [1.50, "Güzel! Ufak tefek sapmalar aklımıza gelebilecek her şeyin bir parçası. Sadece azıcık daha tutar ve dikkat ile potansiyel çok büyük! 🤗💫"],
+        [999, "Çevredeki ek ışıklar bozmuş olabilir mi dikkati? Veya sayı değerini ters yönünde düşünmüş olabilir misiniz? Bunu kötü saymak ihanettir! Bana göre en mükemmel sonuç bu, çünkü kalıcı olarak aydınlandınız! 🌠"]
+      ],
+      en: [
+        [0.05, "Unbelievable! Feel free to be amazed... Are you part hawk 😄? Or dreaming? You're a master of this craft! 🥳"],
+        [0.25, "Outstanding! Your eyes' precision is admirable! Don't ever lose this! ⚡🌝"],
+        [0.50, "Wonderful! You're basically a hidden gem! With just a bit more sharpness (which you clearly have!), no one will be able to keep up with you 🌜"],
+        [0.75, "Absolutely a great result for an attempt! You're thinking clearly! With a little practice this will be perfect! You're amazing 😎🌞"],
+        [1.00, "Definitely not a bad result! The logarithmic jump is steep, that's the trick! Great work, congratulations! 😼✨"],
+        [1.50, "Nice! Small deviations are part of anything worth trying. With a bit more focus, the potential is huge! 🤗💫"],
+        [999, "Could some stray light have thrown you off? Or did you perhaps estimate in the wrong direction? Calling this bad would be unfair! To me this is the most perfect result, because you've been permanently illuminated! 🌠"]
+      ]
+    };
+
+    function geriBildirimSec(hata) {
+      var liste = geriBildirimler[lang];
+      for (var i = 0; i < liste.length; i++) {
+        if (hata <= liste[i][0]) return liste[i][1];
+      }
+      return liste[liste.length - 1][1];
+    }
+
+    function hesaplaSonuc() {
+      var id = document.getElementById("secilenYildiz").value;
+      var girisStr = document.getElementById("tahminKadir").value;
+      if (girisStr === "" || !yildizKatalog[id]) return;
+
+      var tahmin = parseFloat(girisStr);
+      var veri = yildizKatalog[id];
+
+      var uzaklikPc = Math.pow(10, (tahmin - veri.M + 5) / 5);
+      var uzaklikLy = uzaklikPc * 3.26156;
+      var hata = Math.abs(tahmin - veri.V);
+      var birim = sozluk[lang].lyBirim;
+
+      document.getElementById("sTahmin").textContent = tahmin.toFixed(2);
+      document.getElementById("sUzaklikHesap").textContent = Math.round(uzaklikLy) + " " + birim;
+      document.getElementById("sGercekKadir").textContent = veri.V.toFixed(2);
+      document.getElementById("sUzaklikGercek").textContent = Math.round(veri.d) + " " + birim;
+      document.getElementById("sHata").textContent = hata.toFixed(2) + " " + sozluk[lang].magBirim;
+
+      document.getElementById("sGeriBildirim").textContent = geriBildirimSec(hata);
+      document.getElementById("sonucKutu").classList.add("goster");
+    }
+
+    function nasilToggle() {
+      document.getElementById("nasilMetni").classList.toggle("acik");
+    }
+
+    /* ---------- dil değiştirme butonu ---------- */
+    document.getElementById("dilBtn").addEventListener("click", function () {
+      lang = lang === "tr" ? "en" : "tr";
+      metinleriUygula();
+      yildizListesiOlustur();
+      rehberGoster();
+      document.getElementById("sonucKutu").classList.remove("goster");
+    });
+
+    /* ---------- gece modu butonu ---------- */
+    document.getElementById("geceBtn").addEventListener("click", function () {
+      document.documentElement.classList.toggle("gece-modu");
+    });
+
+    /* ---------- başlangıç ---------- */
+    metinleriUygula();
+    yildizListesiOlustur();
+    rehberGoster();
+  </script>
+
+</body>
+</html>
